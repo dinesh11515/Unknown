@@ -1,34 +1,20 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+// SPDX-License-Identifier: Unlicensed
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+pragma solidity >=0.8.13 <0.8.20;
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+import "fhevm/lib/TFHE.sol";
 
-    event Withdrawal(uint amount, uint when);
+contract Counter {
+    euint32 public counter;
 
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
-
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+    function add(bytes calldata encryptedValue) public {
+        euint32 value = TFHE.asEuint32(encryptedValue);
+        counter = TFHE.add(counter, value);
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
-
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
-
-        emit Withdrawal(address(this).balance, block.timestamp);
-
-        owner.transfer(address(this).balance);
+    function getCounter(
+        bytes32 publicKey
+    ) external view returns (bytes memory) {
+        return TFHE.reencrypt(counter, publicKey);
     }
 }
