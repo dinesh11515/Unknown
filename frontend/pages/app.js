@@ -1,24 +1,29 @@
 import Image from "next/image";
-import { useState } from "react";
-import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
-import { BsPlusCircleDotted } from "react-icons/bs";
-import { BiSolidDashboard } from "react-icons/bi";
+import { useState, useEffect } from "react";
 import Wrapper from "@/components/Wrapper";
 import Stream from "@/components/Stream";
 import { useRouter } from "next/router";
+import { ethers } from "ethers";
+
 export default function App() {
-  const [text, setText] = useState("All Streams");
-  const [wrap, setWrap] = useState(false);
+  const [wrap, setWrap] = useState(true);
   const [send, setSend] = useState(false);
+  const [transfer, setTransfer] = useState(false);
+  const [privateTransfer, setPrivateTransfer] = useState(false);
+  const [signer, setSigner] = useState();
   const [connected, setConnected] = useState(false);
   const [account, setAccount] = useState("");
   const router = useRouter();
   async function connect() {
-    if (window.fuel) {
+    if (window.ethereum) {
       try {
-        await window.fuel.connect();
-        const [account] = await window.fuel.accounts();
-        setAccount(account);
+        const provider = new ethers.BrowserProvider(window.ethereum);
+
+        await provider.send("eth_requestAccounts", []);
+
+        const signer = await provider.getSigner();
+        setSigner(signer);
+        setAccount(signer.address);
         setConnected(true);
       } catch (err) {
         console.log("error connecting: ", err);
@@ -26,10 +31,10 @@ export default function App() {
     }
   }
   return (
-    <div className="">
-      <div className="flex px-20 desktop:px-40 py-4  items-center justify-between gap-1 border-b-[2px] border-black">
+    <div className="mx-40  desktop:mx-60">
+      <div className="flex   py-4  items-center justify-between gap-1 ">
         <button
-          className="flex  text-4xl items-center gap-1 "
+          className="flex  text-4xl items-center gap-3 "
           onClick={() => router.push("/")}
         >
           <Image src="/stream.ico" width={45} height={14} alt="logo"></Image>
@@ -48,36 +53,68 @@ export default function App() {
           </p>
         )}
       </div>
-      <div className="px-20  desktop:px-40 py-6">
-        <p className="text-[30px]">{text}</p>
-        <div className="flex gap-20 border-[2px] border-black  px-6 py-4 mt-6 text-gray-500">
+      <div className="flex flex-col items-center">
+        <div className="flex gap-2   px-3 py-3 mt-6 text-gray-500 bg-white rounded-xl">
           <button
-            className={`flex gap-2 items-center text-2xl tracking-wider  ${
-              wrap && "text-black"
+            className={`flex gap-2 items-center text-lg tracking-wider px-4 py-2 rounded-xl  ${
+              wrap && "text-black bg-[#e5ffe7] "
             }`}
             onClick={() => {
               setWrap(true);
               setSend(false);
-              setText("Wrap / UnWrap");
+              setTransfer(false);
+              setPrivateTransfer(false);
             }}
           >
-            <BsPlusCircleDotted /> Wrap / UnWrap
+            Wrap / UnWrap
           </button>
+
           <button
-            className={`flex gap-2 items-center text-2xl tracking-wider  ${
-              send && "text-black"
+            className={`flex gap-2 items-center text-lg tracking-wider px-4 py-2 rounded-lg  ${
+              send && "text-black bg-[#e5ffe7] "
             }`}
             onClick={() => {
               setSend(true);
               setWrap(false);
-              setText("Send Stream");
+              setTransfer(false);
+              setPrivateTransfer(false);
             }}
           >
-            <BsFillArrowUpRightCircleFill /> Send Stream
+            Send Stream
+          </button>
+          <button
+            className={`flex gap-2 items-center text-lg tracking-wider px-4 py-2 rounded-xl  ${
+              transfer && "text-black bg-[#e5ffe7] "
+            }`}
+            onClick={() => {
+              setWrap(false);
+              setSend(false);
+              setTransfer(true);
+              setPrivateTransfer(false);
+            }}
+          >
+            Transfer
+          </button>
+          <button
+            className={`flex gap-2 items-center text-lg tracking-wider px-4 py-2 rounded-xl  ${
+              privateTransfer && "text-black bg-[#e5ffe7] "
+            }`}
+            onClick={() => {
+              setWrap(false);
+              setSend(false);
+              setTransfer(false);
+              setPrivateTransfer(true);
+            }}
+          >
+            Private Transfer
           </button>
         </div>
-        {wrap && <Wrapper connected={connected} connect={connect} />}
-        {send && <Stream connected={connected} connect={connect} />}
+        {wrap && (
+          <Wrapper connected={connected} connect={connect} signer={signer} />
+        )}
+        {send && (
+          <Stream connected={connected} connect={connect} signer={signer} />
+        )}
       </div>
     </div>
   );

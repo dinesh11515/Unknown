@@ -8,8 +8,7 @@ contract sFHE is EIP712WithModifier {
     euint32 private totalSupply;
     string public constant name = "StreamableFHE";
     string public constant symbol = "sFHE";
-    uint8 public constant decimals = 18;
-
+    uint8 public constant decimals = 9;
     // used for output authorization
     bytes32 private DOMAIN_SEPARATOR;
 
@@ -40,9 +39,9 @@ contract sFHE is EIP712WithModifier {
         require(msg.value > 0, "Need to send tokens");
         balances[msg.sender] = TFHE.add(
             balances[msg.sender],
-            uint32(msg.value)
+            uint32(msg.value / 10e9)
         );
-        totalSupply = TFHE.add(totalSupply, uint32(msg.value));
+        totalSupply = TFHE.add(totalSupply, uint32(msg.value / 10e9));
     }
 
     function unwrap(uint32 _amount) public {

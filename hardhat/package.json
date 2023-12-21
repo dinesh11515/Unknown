@@ -6,6 +6,9 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.0",
-    "fhevm": "^0.2.2"
+    "@remix-project/remixd": "^0.6.21",
+    "dotenv": "^16.3.1",
+    "fhevm": "^0.2.2",
+    "global": "^4.4.0"
   }
 }
