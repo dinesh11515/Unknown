@@ -47,7 +47,7 @@ export default function Stream({ connected, connect, signer }) {
   if (!isInitialized) return null;
 
   return (
-    <div className="mt-10 flex flex-col items-center  rounded-xl w-1/3">
+    <div className="mt-10 flex flex-col items-center  rounded-xl w-[40%]">
       <div className="rounded-xl   py-7 px-8 w-full bg-white">
         <p className="text-black text-xl font-bold">Send Stream</p>
         <div className="mt-4">

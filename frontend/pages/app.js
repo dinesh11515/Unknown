@@ -4,6 +4,8 @@ import Wrapper from "@/components/Wrapper";
 import Stream from "@/components/Stream";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
+import Transfer from "@/components/Transfer";
+import Private from "@/components/Private";
 
 export default function App() {
   const [wrap, setWrap] = useState(true);
@@ -114,6 +116,14 @@ export default function App() {
         )}
         {send && (
           <Stream connected={connected} connect={connect} signer={signer} />
+        )}
+
+        {transfer && (
+          <Transfer connected={connected} connect={connect} signer={signer} />
+        )}
+
+        {privateTransfer && (
+          <Private connected={connected} connect={connect} signer={signer} />
         )}
       </div>
     </div>

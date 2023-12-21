@@ -36,7 +36,7 @@ export default function Wrapper({ connected, connect, signer }) {
     }
   };
   return (
-    <div className="mt-10 flex flex-col items-center  rounded-xl w-1/3">
+    <div className="mt-10 flex flex-col items-center  rounded-xl w-[40%]">
       <div className="rounded-xl   py-7 px-8 w-full bg-white">
         <div className="flex gap-4 items-center ">
           <button
